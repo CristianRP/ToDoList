@@ -32,7 +32,7 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return VmDatabase(file);
+    return VmDatabase(file, logStatements: true);
   });
 }
 
@@ -46,12 +46,22 @@ class MyDatabase extends _$MyDatabase {
 
   Future<List<ToDo>> get allToDoEntries => select(toDos).get();
 
+  Stream<List<ToDo>> watchAllToDoEntries() => select(toDos).watch();
+
   Stream<List<ToDo>> watchEntriesInCategory(Category c) {
     return (select(toDos)..where((t) => t.category.equals(c.id))).watch();
   }
 
-  Future<int> addToDoEntry(ToDosCompanion entry) {
+  Future<int> addToDoEntry(ToDo entry) {
     return into(toDos).insert(entry);
+  }
+
+  Future<bool> updateToDoEntry(ToDo entry) {
+    return update(toDos).replace(entry);
+  }
+
+  Future<int> deleteToDo(ToDo entry) {
+    return delete(toDos).delete(entry);
   }
 
   Future<void> insertMultipleEntries() async {

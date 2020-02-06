@@ -11,30 +11,40 @@ class ToDo extends DataClass implements Insertable<ToDo> {
   final int id;
   final String title;
   final String content;
+  final DateTime dueDate;
   final Uint8List image;
   final int category;
+  final bool completed;
   ToDo(
       {@required this.id,
       @required this.title,
       @required this.content,
+      this.dueDate,
       this.image,
-      this.category});
+      this.category,
+      @required this.completed});
   factory ToDo.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
     final uint8ListType = db.typeSystem.forDartType<Uint8List>();
+    final boolType = db.typeSystem.forDartType<bool>();
     return ToDo(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       content:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
+      dueDate: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}due_date']),
       image: uint8ListType
           .mapFromDatabaseResponse(data['${effectivePrefix}image']),
       category:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}category']),
+      completed:
+          boolType.mapFromDatabaseResponse(data['${effectivePrefix}completed']),
     );
   }
   factory ToDo.fromJson(Map<String, dynamic> json,
@@ -44,8 +54,10 @@ class ToDo extends DataClass implements Insertable<ToDo> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
+      dueDate: serializer.fromJson<DateTime>(json['dueDate']),
       image: serializer.fromJson<Uint8List>(json['image']),
       category: serializer.fromJson<int>(json['category']),
+      completed: serializer.fromJson<bool>(json['completed']),
     );
   }
   @override
@@ -55,8 +67,10 @@ class ToDo extends DataClass implements Insertable<ToDo> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
+      'dueDate': serializer.toJson<DateTime>(dueDate),
       'image': serializer.toJson<Uint8List>(image),
       'category': serializer.toJson<int>(category),
+      'completed': serializer.toJson<bool>(completed),
     };
   }
 
@@ -69,11 +83,17 @@ class ToDo extends DataClass implements Insertable<ToDo> {
       content: content == null && nullToAbsent
           ? const Value.absent()
           : Value(content),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
       image:
           image == null && nullToAbsent ? const Value.absent() : Value(image),
       category: category == null && nullToAbsent
           ? const Value.absent()
           : Value(category),
+      completed: completed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completed),
     );
   }
 
@@ -81,14 +101,18 @@ class ToDo extends DataClass implements Insertable<ToDo> {
           {int id,
           String title,
           String content,
+          DateTime dueDate,
           Uint8List image,
-          int category}) =>
+          int category,
+          bool completed}) =>
       ToDo(
         id: id ?? this.id,
         title: title ?? this.title,
         content: content ?? this.content,
+        dueDate: dueDate ?? this.dueDate,
         image: image ?? this.image,
         category: category ?? this.category,
+        completed: completed ?? this.completed,
       );
   @override
   String toString() {
@@ -96,8 +120,10 @@ class ToDo extends DataClass implements Insertable<ToDo> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('content: $content, ')
+          ..write('dueDate: $dueDate, ')
           ..write('image: $image, ')
-          ..write('category: $category')
+          ..write('category: $category, ')
+          ..write('completed: $completed')
           ..write(')'))
         .toString();
   }
@@ -105,8 +131,14 @@ class ToDo extends DataClass implements Insertable<ToDo> {
   @override
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
-      $mrjc(title.hashCode,
-          $mrjc(content.hashCode, $mrjc(image.hashCode, category.hashCode)))));
+      $mrjc(
+          title.hashCode,
+          $mrjc(
+              content.hashCode,
+              $mrjc(
+                  dueDate.hashCode,
+                  $mrjc(image.hashCode,
+                      $mrjc(category.hashCode, completed.hashCode)))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -114,43 +146,55 @@ class ToDo extends DataClass implements Insertable<ToDo> {
           other.id == this.id &&
           other.title == this.title &&
           other.content == this.content &&
+          other.dueDate == this.dueDate &&
           other.image == this.image &&
-          other.category == this.category);
+          other.category == this.category &&
+          other.completed == this.completed);
 }
 
 class ToDosCompanion extends UpdateCompanion<ToDo> {
   final Value<int> id;
   final Value<String> title;
   final Value<String> content;
+  final Value<DateTime> dueDate;
   final Value<Uint8List> image;
   final Value<int> category;
+  final Value<bool> completed;
   const ToDosCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
+    this.dueDate = const Value.absent(),
     this.image = const Value.absent(),
     this.category = const Value.absent(),
+    this.completed = const Value.absent(),
   });
   ToDosCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
     @required String content,
+    this.dueDate = const Value.absent(),
     this.image = const Value.absent(),
     this.category = const Value.absent(),
+    this.completed = const Value.absent(),
   })  : title = Value(title),
         content = Value(content);
   ToDosCompanion copyWith(
       {Value<int> id,
       Value<String> title,
       Value<String> content,
+      Value<DateTime> dueDate,
       Value<Uint8List> image,
-      Value<int> category}) {
+      Value<int> category,
+      Value<bool> completed}) {
     return ToDosCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
+      dueDate: dueDate ?? this.dueDate,
       image: image ?? this.image,
       category: category ?? this.category,
+      completed: completed ?? this.completed,
     );
   }
 }
@@ -174,7 +218,7 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
   GeneratedTextColumn get title => _title ??= _constructTitle();
   GeneratedTextColumn _constructTitle() {
     return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 6, maxTextLength: 32);
+        minTextLength: 6, maxTextLength: 50);
   }
 
   final VerificationMeta _contentMeta = const VerificationMeta('content');
@@ -186,6 +230,18 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
       'body',
       $tableName,
       false,
+    );
+  }
+
+  final VerificationMeta _dueDateMeta = const VerificationMeta('dueDate');
+  GeneratedDateTimeColumn _dueDate;
+  @override
+  GeneratedDateTimeColumn get dueDate => _dueDate ??= _constructDueDate();
+  GeneratedDateTimeColumn _constructDueDate() {
+    return GeneratedDateTimeColumn(
+      'due_date',
+      $tableName,
+      true,
     );
   }
 
@@ -213,8 +269,18 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
     );
   }
 
+  final VerificationMeta _completedMeta = const VerificationMeta('completed');
+  GeneratedBoolColumn _completed;
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, image, category];
+  GeneratedBoolColumn get completed => _completed ??= _constructCompleted();
+  GeneratedBoolColumn _constructCompleted() {
+    return GeneratedBoolColumn('completed', $tableName, false,
+        defaultValue: Constant(false));
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, content, dueDate, image, category, completed];
   @override
   $ToDosTable get asDslTable => this;
   @override
@@ -240,6 +306,10 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
     } else if (isInserting) {
       context.missing(_contentMeta);
     }
+    if (d.dueDate.present) {
+      context.handle(_dueDateMeta,
+          dueDate.isAcceptableValue(d.dueDate.value, _dueDateMeta));
+    }
     if (d.image.present) {
       context.handle(
           _imageMeta, image.isAcceptableValue(d.image.value, _imageMeta));
@@ -247,6 +317,10 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
     if (d.category.present) {
       context.handle(_categoryMeta,
           category.isAcceptableValue(d.category.value, _categoryMeta));
+    }
+    if (d.completed.present) {
+      context.handle(_completedMeta,
+          completed.isAcceptableValue(d.completed.value, _completedMeta));
     }
     return context;
   }
@@ -271,11 +345,17 @@ class $ToDosTable extends ToDos with TableInfo<$ToDosTable, ToDo> {
     if (d.content.present) {
       map['body'] = Variable<String, StringType>(d.content.value);
     }
+    if (d.dueDate.present) {
+      map['due_date'] = Variable<DateTime, DateTimeType>(d.dueDate.value);
+    }
     if (d.image.present) {
       map['image'] = Variable<Uint8List, BlobType>(d.image.value);
     }
     if (d.category.present) {
       map['category'] = Variable<int, IntType>(d.category.value);
+    }
+    if (d.completed.present) {
+      map['completed'] = Variable<bool, BoolType>(d.completed.value);
     }
     return map;
   }

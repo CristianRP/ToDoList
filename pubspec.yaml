@@ -27,6 +27,8 @@ dependencies:
   moor_ffi: ^0.4.0 # contains code that will run the actual queries
   path_provider: ^1.6.0 # Used to find a suitable location to store the database
   path: ^1.6.4 # Same as path_provider
+  provider: ^4.0.3
+  flutter_slidable: ^0.5.4
 
 dev_dependencies:
   flutter_test:
