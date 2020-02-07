@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/data/database/database.dart';
+import 'package:todo_list/data/providers/to_do_dao.dart';
 
 class NewTodoInput extends StatefulWidget {
   NewTodoInput({Key key}) : super(key: key);
@@ -42,13 +44,13 @@ class _NewTodoInputState extends State<NewTodoInput> {
         textInputAction: TextInputAction.next,
         onSubmitted: (inputName) {
           //print(inputName);
-          final database = Provider.of<MyDatabase>(context, listen: false);
-          final toDo = ToDo(
-            title: inputName,
-            dueDate: newToDoDate,
-            content: inputName
+          final dao = Provider.of<ToDoDao>(context, listen: false);
+          final toDo = ToDosCompanion(
+            title: Value(inputName),
+            dueDate: Value(newToDoDate),
+            content: Value(inputName)
           );
-          database.addToDoEntry(toDo);
+          dao.addToDoEntry(toDo);
           resetValuesAfterSubmit();
         },
       ),

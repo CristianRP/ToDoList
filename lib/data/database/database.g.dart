@@ -534,6 +534,8 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   $ToDosTable get toDos => _toDos ??= $ToDosTable(this);
   $CategoriesTable _categories;
   $CategoriesTable get categories => _categories ??= $CategoriesTable(this);
+  ToDoDao _toDoDao;
+  ToDoDao get toDoDao => _toDoDao ??= ToDoDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

@@ -4,6 +4,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:todo_list/data/providers/to_do_dao.dart';
 
 part 'database.g.dart';
 
@@ -36,7 +37,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [ToDos, Categories])
+@UseMoor(tables: [ToDos, Categories], daos: [ToDoDao])
 class MyDatabase extends _$MyDatabase {
 
   MyDatabase() : super(_openConnection());
@@ -44,29 +45,4 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
-  Future<List<ToDo>> get allToDoEntries => select(toDos).get();
-
-  Stream<List<ToDo>> watchAllToDoEntries() => select(toDos).watch();
-
-  Stream<List<ToDo>> watchEntriesInCategory(Category c) {
-    return (select(toDos)..where((t) => t.category.equals(c.id))).watch();
-  }
-
-  Future<int> addToDoEntry(ToDo entry) {
-    return into(toDos).insert(entry);
-  }
-
-  Future<bool> updateToDoEntry(ToDo entry) {
-    return update(toDos).replace(entry);
-  }
-
-  Future<int> deleteToDo(ToDo entry) {
-    return delete(toDos).delete(entry);
-  }
-
-  Future<void> insertMultipleEntries() async {
-    await batch((batch) {
-      batch.insertAll(toDos, [ToDosCompanion.insert(title: null, content: null)]);
-    });
-  }
 }
